@@ -1,76 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
-
-typedef struct Stack {
-    int top;
-    int capacity;
-    int *array;
-}Stack;
 
 
-Stack* createStack(int capacity) {
-    Stack* stack = (Stack*) malloc(sizeof(Stack));
+typedef struct StackNode {
+    int data;
+    struct StackNode *next;
+} StackNode;
 
+StackNode *newNode(int data) {
+    StackNode *nNode = (StackNode *) malloc(sizeof(StackNode));
 
-    stack->top = -1;
-    stack->capacity = capacity;
-    stack->array = (int*) malloc(sizeof(int) * capacity);
+    nNode->data = data;
+    nNode->next = NULL;
 
-    return stack;
-
+    return nNode;
 }
 
-int isFull(Stack* stack) {
-    return stack->top == stack->capacity -1;
+int isEmpty(StackNode *root) {
+    return root == NULL;
 }
 
-int isEmpty(Stack* stack) {
-    return stack->top == -1;
+void push(StackNode **root, int data) {
+    StackNode *nNode = newNode(data);
+
+    nNode->next = *root;
+    *root = nNode;
+    printf("%d is added to stack.\n", data);
 }
 
 
-void push(Stack* stack, int value) {
-    if(isFull(stack)) {
-        printf("Stack is full.\n");
-        return;
-    }
+int pop(StackNode **root) {
+    StackNode *tempNewRoot = (*root)->next;
 
-    stack->array[++stack->top] = value;
-    printf("%d is added to stack.\n", value);
+    int poppeddata = (*root)->data;
 
+    *root = NULL;
+    free(*root);
+    *root = tempNewRoot;
+
+    printf("%d is removed from stack.\n", poppeddata);
 }
 
-int pop(Stack* stack) {
-    if(isEmpty(stack)) {
-        printf("Stack is empty\n");
-        return INT_MIN;
-    }
 
-    return stack->array[stack->top--];
+int main() {
+    StackNode *root = newNode(0);
 
-}
+    push(&root, 10);
+    push(&root, 20);
+    push(&root, 30);
 
-int main(void) {
+    pop(&root);
+    pop(&root);
+    pop(&root);
 
-    Stack* stack = createStack(3);
-
-    push(stack, 10);
-    push(stack, 20);
-    push(stack, 30);
-
-    push(stack, 40);
-
-    printf("\n");
-
-    printf("%d is popped out of stack.\n" ,pop(stack));
-    printf("%d is popped out of stack.\n" ,pop(stack));
-    printf("%d is popped out of stack.\n" ,pop(stack));
-
-    printf("%d is popped out of stack.\n" ,pop(stack));
-
-
-    free(stack);
+    free(root);
 
     return 0;
 }
